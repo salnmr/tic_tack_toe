@@ -1,7 +1,8 @@
 # tic tack toe
 import pprint, random, sys, math
 
-board = {"a1": " ", "a2": " ", "a3": " ", "b1": " ", "b2": " ", "b3": " ", "c1": " ", "c2": " ", "c3": " "}
+board = {"a1": False, "a2": False, "a3": False, "b1": False, "b2": False,
+         "b3": False, "c1": False, "c2": False, "c3": False}
 
 winning = {"win1": {"a1": True, "a2": True, "a3": True}, "win2": {"b1": True, "b2": True, "b3": True},
            "win3": {"c1": True, "c2": True, "c3": True}, "win4": {"a1": True, "b1": True, "c1": True},
@@ -12,10 +13,51 @@ state = {"first_round": True, "quit": False, "rounds": 0, "rounds_played": 0, "b
 players = {"player_one": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0},
            "player_two": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0}}
 
-def intro():
-    print("tbd \n")
+def text_block(text):
+    if text == "intro":
+        print("""
+                █████   ███   █████          ████                                                    █████                                                 
+                ░░███   ░███  ░░███          ░░███                                                   ░░███                                                  
+                 ░███   ░███   ░███   ██████  ░███  █████ █████  ██████  █████████████    ██████     ███████    ██████                                      
+                 ░███   ░███   ░███  ███░░███ ░███ ░░███ ░░███  ███░░███░░███░░███░░███  ███░░███   ░░░███░    ███░░███                                     
+                 ░░███  █████  ███  ░███████  ░███  ░░░█████░  ░███ ░███ ░███ ░███ ░███ ░███████      ░███    ░███ ░███                                     
+                  ░░░█████░█████░   ░███░░░   ░███   ███░░░███ ░███ ░███ ░███ ░███ ░███ ░███░░░       ░███ ███░███ ░███                                     
+                    ░░███ ░░███     ░░██████  █████ █████ █████░░██████  █████░███ █████░░██████      ░░█████ ░░██████                                      
+                     ░░░   ░░░       ░░░░░░  ░░░░░ ░░░░░ ░░░░░  ░░░░░░  ░░░░░ ░░░ ░░░░░  ░░░░░░        ░░░░░   ░░░░░░                                       
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+ ███████████ █████   █████████  █████   ████    ███████████   █████████   █████   ████                  ███████████    ███████    ██████████
+░█░░░███░░░█░░███   ███░░░░░███░░███   ███░    ░█░░░███░░░█  ███░░░░░███ ░░███   ███░                  ░█░░░███░░░█  ███░░░░░███ ░░███░░░░░█
+░   ░███  ░  ░███  ███     ░░░  ░███  ███      ░   ░███  ░  ░███    ░███  ░███  ███                    ░   ░███  ░  ███     ░░███ ░███  █ ░ 
+    ░███     ░███ ░███          ░███████           ░███     ░███████████  ░███████        ██████████       ░███    ░███      ░███ ░██████   
+    ░███     ░███ ░███          ░███░░███          ░███     ░███░░░░░███  ░███░░███      ░░░░░░░░░░        ░███    ░███      ░███ ░███░░█   
+    ░███     ░███ ░░███     ███ ░███ ░░███         ░███     ░███    ░███  ░███ ░░███                       ░███    ░░███     ███  ░███ ░   █
+    █████    █████ ░░█████████  █████ ░░████       █████    █████   █████ █████ ░░████                     █████    ░░░███████░   ██████████
+            """)
+        print()
+        return None
 
-def player():
+    elif text == "rules":
+        print("""
+                                        ███████████   █████  █████ █████       ██████████  █████████ 
+                                        ░░███░░░░░███ ░░███  ░░███ ░░███       ░░███░░░░░█ ███░░░░░███
+                                         ░███    ░███  ░███   ░███  ░███        ░███  █ ░ ░███    ░░░ 
+                                         ░██████████   ░███   ░███  ░███        ░██████   ░░█████████ 
+                                         ░███░░░░░███  ░███   ░███  ░███        ░███░░█    ░░░░░░░░███
+                                         ░███    ░███  ░███   ░███  ░███      █ ░███ ░   █ ███    ░███
+                                         █████   █████ ░░████████   ███████████ ██████████░░█████████ 
+                                        ░░░░░   ░░░░░   ░░░░░░░░   ░░░░░░░░░░░ ░░░░░░░░░░  ░░░░░░░░░ 
+            """)
+        print("1). If you would like to quit type, (Q)uit")
+        if players["player_one"]["order"] == 1:
+            print(f"2). we will being with Player One")
+        else:
+            print(f"2). we will being with Player Two")
+        print()
+        return None
+
+def create_players():
     while state["both_answered"] != True:
         while players["player_one"]["answered"] != 1:
             player = input(f"What is the name for player one?: ").strip()
@@ -42,14 +84,16 @@ def player():
                     print("WARNING: Please make sure you dont have any numbers or special characters within your name. Try again.\n")
             else:
                 print("WARNING: You need to enter something!\n")
+
         state["both_answered"] = False
+        print()
         return None
 
-def order():
-    # who will go first? or randomise?
+def player_order():
+    # pick who to go first
     print(f"""Who will go first? 
     1). Player One ({players['player_one']['name']}) 
-    2). Player Two({players['player_two']['name']}) """)
+    2). Player Two ({players['player_two']['name']}) """)
 
     while state["both_answered"] != True:
         try:
@@ -67,26 +111,44 @@ def order():
         except ValueError:
             print("WARNING: Cant be blank. No special characters. And it has to be a 1 or 2! Try again.\n")
 
-
-def define_game():
-    # while not players["player_one"]["name"] and not players["player_two"]["name"]:
-    player()
+    state["both_answered"] = False
     print()
-    order()
+    return None
+
+def get_turn_amount():
+    # ask how many rounds.
+    while state["rounds"] == 0:
+        try:
+            print("How many rounds would you have to play? Remember it has to be an odd number!")
+            rounds_amount = int(input("Amount of Rounds: ").strip())
+
+            if rounds_amount >= 3 and (rounds_amount % 2) == 1:
+                    state["rounds"] = rounds_amount
+            else:
+                print("WARNING: Thats not correct!\n")
+        except ValueError:
+            print("WARNING: Cant be blank. No special characters. And it has to be a Number! Try again.\n")
+
     print()
+    return None
 
-    state["first_round"] = False
-    return
-
-def game():
-    print("game")
+def draw_board():
+    pass
 
 # main loop
 while state["winner"] != True:
     if state["first_round"] == True:
-        define_game()
+        text_block("intro")
+        create_players()
+        player_order()
+        get_turn_amount()
+        text_block("rules")
+        state["first_round"] = False
     else:
-        # if you would like to quit please
-        game()
-        print("in loop")
-        sys.exit()
+        while state["quit"] != True:
+            draw_board()
+            # start here. all checking of user data is done. Next I have to create the check each imput and then
+            # draw the board
+            #
+            # I might want to add the character check used within each square
+            sys.exit()
