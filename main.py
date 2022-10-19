@@ -1,8 +1,21 @@
 # tic tack toe
 import pprint, random, sys, math
 
-board = {"a1": False, "a2": False, "a3": False, "b1": False, "b2": False,
-         "b3": False, "c1": False, "c2": False, "c3": False}
+fresh_board = {
+    "a3": {"space": "___|", "taken": False}, "b3": {"space": "___", "taken": False},
+    "c3": {"space": "|___", "taken": False},
+    "a2": {"space": "___|", "taken": False}, "b2": {"space": "___", "taken": False},
+    "c2": {"space": "|___", "taken": False},
+    "a1": {"space": "   |", "taken": False}, "b1": {"space": "   ", "taken": False},
+    "c1": {"space": "|   ", "taken": False}}
+
+working_board = {
+    "a3": {"space": "___|", "taken": False}, "b3": {"space": "___", "taken": False},
+    "c3": {"space": "|___", "taken": False},
+    "a2": {"space": "___|", "taken": False}, "b2": {"space": "___", "taken": False},
+    "c2": {"space": "|___", "taken": False},
+    "a1": {"space": "   |", "taken": False}, "b1": {"space": "   ", "taken": False},
+    "c1": {"space": "|   ", "taken": False}}
 
 winning = {"win1": {"a1": True, "a2": True, "a3": True}, "win2": {"b1": True, "b2": True, "b3": True},
            "win3": {"c1": True, "c2": True, "c3": True}, "win4": {"a1": True, "b1": True, "c1": True},
@@ -10,6 +23,7 @@ winning = {"win1": {"a1": True, "a2": True, "a3": True}, "win2": {"b1": True, "b
            "win7": {"a1": True, "b2": True, "c3": True}, "win8": {"c1": True, "b2": True, "a3": True}}
 
 state = {"first_round": True, "quit": False, "rounds": 0, "rounds_played": 0, "both_answered": False, "winner": False}
+
 players = {"player_one": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0},
            "player_two": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0}}
 
@@ -51,9 +65,9 @@ def text_block(text):
             """)
         print("1). If you would like to quit type, (Q)uit")
         if players["player_one"]["order"] == 1:
-            print(f"2). we will being with Player One")
+            print(f"2). We will being with Player One")
         else:
-            print(f"2). we will being with Player Two")
+            print(f"2). We will being with Player Two")
         print()
         return None
 
@@ -97,7 +111,7 @@ def player_order():
 
     while state["both_answered"] != True:
         try:
-            player_order = input("Choose type either 1 or 2: ").strip()
+            player_order = input("Please choose either 1 or 2: ").strip()
             player_order = int(player_order)
             if player_order == 1 or player_order == 2:
                 if player_order == 1:
@@ -119,21 +133,63 @@ def get_turn_amount():
     # ask how many rounds.
     while state["rounds"] == 0:
         try:
-            print("How many rounds would you have to play? Remember it has to be an odd number!")
+            print("How many rounds would you like to play? Remember it has to be an odd number and greater then 3 (or equal to)!")
             rounds_amount = int(input("Amount of Rounds: ").strip())
 
             if rounds_amount >= 3 and (rounds_amount % 2) == 1:
                     state["rounds"] = rounds_amount
             else:
-                print("WARNING: Thats not correct!\n")
+                print("WARNING: Thats not correct! \n")
         except ValueError:
-            print("WARNING: Cant be blank. No special characters. And it has to be a Number! Try again.\n")
+            print("WARNING: Cant be blank. No special characters. And it has to be a Number! Try again. \n")
 
     print()
     return None
 
 def draw_board():
+    if players["player_one"]["order"] == 1:
+        print("Turn: Player One - x")
+    else:
+        print("Turn: Player Two - o")
+
+    holding = ""
+    count = 0
+    for space in working_board:
+        holding += working_board[space]["space"]
+        count += 1
+        if count == 3:
+            print(holding)
+            count = 0
+            holding = ""
+
+def check_player_answer():
+    # pprint.pprint(players)
+    # check answer
+    player = input(f"Answer: ").strip().lower()
+    player_num_check = player.isdigit()
+    player_letter_check = player.isalpha()
+    if player_letter_check == True and player_num_check == False:
+        if player == "quit" or player == "q":
+            state["quit"] = True
+        elif player == "x" or player == "y":
+            print()
+            return player
+        else:
+            print("WARNING: Thats not X or Y... \n")
+    else:
+        print("WARNING:Jesus Christ.... we've done this for like 3 times now. I need the correct Character! X or Y \n")
+
+
+
+
+# Error check and make sure its a vaild answer
+# FOR THE SPECIDIFC PLAYER ALSO!
+
+# change baord
+
+def check_win():
     pass
+
 
 # main loop
 while state["winner"] != True:
@@ -145,10 +201,10 @@ while state["winner"] != True:
         text_block("rules")
         state["first_round"] = False
     else:
-        while state["quit"] != True:
-            draw_board()
-            # start here. all checking of user data is done. Next I have to create the check each imput and then
-            # draw the board
-            #
-            # I might want to add the character check used within each square
-            sys.exit()
+        for count in range(state["rounds"]):
+            while players["player_one"]["won_round"] != True or players["player_two"]["won_round"] != True:
+                while state["quit"] != True:
+                    draw_board()
+                    check_player_answer()
+                    check_win()
+                sys.exit()
