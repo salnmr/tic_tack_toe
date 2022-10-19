@@ -163,31 +163,6 @@ def draw_board():
             holding = ""
 
 
-
-def players_turn_to_answer(player_input):
-# this will check which players turn it is
-    # player one goes
-    if players['player_one']['order'] == 1:
-        # player one = x
-        if player_input == "x":
-            print("correct", player_input)
-            players["player_two"]["order"] = 1
-            players["player_one"]["order"] = 0
-        else:
-            print("wrong", player_input)
-    else:
-        # player 2 goes
-        if player_input == "o":
-            # draw
-            print("correct", player_input)
-            players["player_two"]["order"] = 0
-            players["player_one"]["order"] = 1
-        else:
-            print("wrong", player_input)
-
-
-
-
 def check_player_answer():
     player = input(f"Answer: ").strip().lower()
     player_num_check = player.isdigit()
@@ -202,6 +177,36 @@ def check_player_answer():
             print("WARNING: Thats not X or O... \n")
     else:
         print("WARNING:Jesus Christ.... we've done this for like 3 times now. I need the correct Character! X or O \n")
+
+def players_turn_to_answer(player_input):
+# this will check which players turn it is
+    # player one goes
+    if players['player_one']['order'] == 1:
+        # player one = x
+        if player_input == "x":
+            players["player_two"]["order"] = 1
+            players["player_one"]["order"] = 0
+            write_to_board(player_input, "player_one", square="")
+        else:
+            print(f"Wrong! You are not {player_input}! You are X \n")
+    else:
+        # player 2 goes
+        if player_input == "o":
+            # draw
+            players["player_two"]["order"] = 0
+            players["player_one"]["order"] = 1
+            write_to_board(player_input, "player_two")
+        else:
+            print(f"Wrong! You are not {player_input}! You are O \n")
+
+def write_to_board(player_input, player, square=""):
+    if player == "player_one":
+        pass
+    # player two
+    else:
+        pass
+
+
 
 # Error check and make sure its a vaild answer
 # FOR THE SPECIDIFC PLAYER ALSO!
