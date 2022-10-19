@@ -137,7 +137,7 @@ def get_turn_amount():
             rounds_amount = int(input("Amount of Rounds: ").strip())
 
             if rounds_amount >= 3 and (rounds_amount % 2) == 1:
-                    state["rounds"] = rounds_amount
+                state["rounds"] = rounds_amount
             else:
                 print("WARNING: Thats not correct! \n")
         except ValueError:
@@ -162,25 +162,46 @@ def draw_board():
             count = 0
             holding = ""
 
+
+
+def players_turn_to_answer(player_input):
+# this will check which players turn it is
+    # player one goes
+    if players['player_one']['order'] == 1:
+        # player one = x
+        if player_input == "x":
+            print("correct", player_input)
+            players["player_two"]["order"] = 1
+            players["player_one"]["order"] = 0
+        else:
+            print("wrong", player_input)
+    else:
+        # player 2 goes
+        if player_input == "o":
+            # draw
+            print("correct", player_input)
+            players["player_two"]["order"] = 0
+            players["player_one"]["order"] = 1
+        else:
+            print("wrong", player_input)
+
+
+
+
 def check_player_answer():
-    # pprint.pprint(players)
-    # check answer
     player = input(f"Answer: ").strip().lower()
     player_num_check = player.isdigit()
     player_letter_check = player.isalpha()
     if player_letter_check == True and player_num_check == False:
         if player == "quit" or player == "q":
             state["quit"] = True
-        elif player == "x" or player == "y":
-            print()
-            return player
+        elif player == "x" or player == "o":
+            players_turn_to_answer(player)
+        # pass player answer here
         else:
-            print("WARNING: Thats not X or Y... \n")
+            print("WARNING: Thats not X or O... \n")
     else:
-        print("WARNING:Jesus Christ.... we've done this for like 3 times now. I need the correct Character! X or Y \n")
-
-
-
+        print("WARNING:Jesus Christ.... we've done this for like 3 times now. I need the correct Character! X or O \n")
 
 # Error check and make sure its a vaild answer
 # FOR THE SPECIDIFC PLAYER ALSO!
