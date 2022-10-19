@@ -17,6 +17,14 @@ working_board = {
     "a1": {"space": "   |", "taken": False}, "b1": {"space": "   ", "taken": False},
     "c1": {"space": "|   ", "taken": False}}
 
+ref_board = {
+    "a3": {"space": "_*_|", "taken": False}, "b3": {"space": "_*_", "taken": False},
+    "c3": {"space": "|_*_", "taken": False},
+    "a2": {"space": "_*_|", "taken": False}, "b2": {"space": "_*_", "taken": False},
+    "c2": {"space": "|_*_", "taken": False},
+    "a1": {"space": " * |", "taken": False}, "b1": {"space": " * ", "taken": False},
+    "c1": {"space": "| * ", "taken": False}}
+
 winning = {"win1": {"a1": True, "a2": True, "a3": True}, "win2": {"b1": True, "b2": True, "b3": True},
            "win3": {"c1": True, "c2": True, "c3": True}, "win4": {"a1": True, "b1": True, "c1": True},
            "win5": {"a2": True, "b2": True, "c2": True}, "win6": {"a3": True, "b3": True, "c3": True},
@@ -24,8 +32,8 @@ winning = {"win1": {"a1": True, "a2": True, "a3": True}, "win2": {"b1": True, "b
 
 state = {"first_round": True, "quit": False, "rounds": 0, "rounds_played": 0, "both_answered": False, "winner": False}
 
-players = {"player_one": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0},
-           "player_two": {"name": "", "score": 0, "won_round": False, "answered": 0, "order": 0}}
+players = {"player_one": {"name": "", "score": 0, "won_round": False, "answered": False, "order": 0},
+           "player_two": {"name": "", "score": 0, "won_round": False, "answered": False, "order": 0}}
 
 def text_block(text):
     if text == "intro":
@@ -162,59 +170,80 @@ def draw_board():
             count = 0
             holding = ""
 
-
 def check_player_answer():
-    player = input(f"Answer: ").strip().lower()
-    player_num_check = player.isdigit()
-    player_letter_check = player.isalpha()
-    if player_letter_check == True and player_num_check == False:
-        if player == "quit" or player == "q":
-            state["quit"] = True
-        elif player == "x" or player == "o":
-            players_turn_to_answer(player)
-        # pass player answer here
+    square = input(f"Square: ").strip().lower()
+    while bool(square) != False:
+        if square in working_board.keys():
+            if working_board[square]['taken'] == False:
+                players_turn_to_answer(square)
+            else:
+                if players["player_one"]["answered"] == True or players["player_two"]["answered"] == True:
+                    players["player_one"]["answered"] = False
+                    players["player_two"]["answered"] = False
+                    return
+                else:
+                    print("WARNING: Sorry that spot is taken \n")
+                    break
         else:
-            print("WARNING: Thats not X or O... \n")
-    else:
-        print("WARNING:Jesus Christ.... we've done this for like 3 times now. I need the correct Character! X or O \n")
+            print("WARNING: That is not a vaild combo. Remeber, a1, b3, c2, etc... \n")
+            break
+    if square == "":
+        print("WARNING: I need something! It cant be blank \n")
 
-def players_turn_to_answer(player_input):
+def players_turn_to_answer(square):
 # this will check which players turn it is
     # player one goes
     if players['player_one']['order'] == 1:
         # player one = x
-        if player_input == "x":
-            players["player_two"]["order"] = 1
-            players["player_one"]["order"] = 0
-            write_to_board(player_input, "player_one", square="")
-        else:
-            print(f"Wrong! You are not {player_input}! You are X \n")
+        write_to_board("player_one", square)
+        players["player_two"]["order"] = 1
+        players["player_one"]["order"] = 0
+
     else:
         # player 2 goes
-        if player_input == "o":
-            # draw
-            players["player_two"]["order"] = 0
-            players["player_one"]["order"] = 1
-            write_to_board(player_input, "player_two")
-        else:
-            print(f"Wrong! You are not {player_input}! You are O \n")
+        write_to_board("player_two", square)
+        players["player_two"]["order"] = 0
+        players["player_one"]["order"] = 1
 
-def write_to_board(player_input, player, square=""):
+def write_to_board(player, square):
     if player == "player_one":
-        pass
+        # take sqaure and write to it.
+        new_square = ""
+        for count, letter in enumerate(ref_board[square]["space"]):
+            if letter == "*":
+                new_square += "x"
+            else:
+                if letter == "_":
+                    new_square += "_"
+                elif letter == " ":
+                    new_square += " "
+                else:
+                    new_square += "|"
+        players[player]['answered'] = True
     # player two
     else:
-        pass
+        # take sqaure and write to it.
+        new_square = ""
+        for count, letter in enumerate(ref_board[square]["space"]):
+            if letter == "*":
+                new_square += "O"
+            else:
+                if letter == "_":
+                    new_square += "_"
+                elif letter == " ":
+                    new_square += " "
+                else:
+                    new_square += "|"
+        players[player]['answered'] = True
 
-
-
-# Error check and make sure its a vaild answer
-# FOR THE SPECIDIFC PLAYER ALSO!
-
-# change baord
+    working_board[square]["space"] = new_square
+    working_board[square]["taken"] = True
+    return
 
 def check_win():
-    pass
+    print()
+    return
+
 
 
 # main loop
